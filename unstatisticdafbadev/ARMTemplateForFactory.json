@@ -1,0 +1,841 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"type": "string",
+			"metadata": "Data Factory name",
+			"defaultValue": "unstatisticdafbadev"
+		},
+		"msbiazurelinkedservice_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'msbiazurelinkedservice'"
+		},
+		"unstatisticsqlsbadevlinkedservice_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'unstatisticsqlsbadevlinkedservice'"
+		}
+	},
+	"variables": {
+		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+	},
+	"resources": [
+		{
+			"name": "[concat(parameters('factoryName'), '/first_pipeline')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "ForEach_41i",
+						"type": "ForEach",
+						"dependsOn": [],
+						"userProperties": [],
+						"typeProperties": {
+							"items": {
+								"value": "@pipeline().parameters.cw_items",
+								"type": "Expression"
+							},
+							"activities": [
+								{
+									"name": "Copy_41i",
+									"type": "Copy",
+									"dependsOn": [],
+									"policy": {
+										"timeout": "7.00:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [
+										{
+											"name": "Source",
+											"value": "task.@{item().source.table}"
+										},
+										{
+											"name": "Destination",
+											"value": "task.@{item().destination.table}"
+										}
+									],
+									"typeProperties": {
+										"source": {
+											"type": "AzureSqlSource",
+											"partitionOption": "None"
+										},
+										"sink": {
+											"type": "AzureSqlSink",
+											"tableOption": "autoCreate"
+										},
+										"enableStaging": false,
+										"validateDataConsistency": false,
+										"translator": {
+											"value": "@item().copyActivity.translator",
+											"type": "Expression"
+										}
+									},
+									"inputs": [
+										{
+											"referenceName": "SourceDataset_41i",
+											"type": "DatasetReference",
+											"parameters": {
+												"cw_table": "@item().source.table"
+											}
+										}
+									],
+									"outputs": [
+										{
+											"referenceName": "DestinationDataset_41i",
+											"type": "DatasetReference",
+											"parameters": {
+												"cw_table": "@item().destination.table"
+											}
+										}
+									]
+								}
+							]
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"parameters": {
+					"cw_items": {
+						"type": "Array",
+						"defaultValue": [
+							{
+								"source": {
+									"table": "Course"
+								},
+								"destination": {
+									"table": "Course"
+								},
+								"copyActivity": {
+									"translator": {
+										"type": "TabularTranslator",
+										"mappings": [
+											{
+												"source": {
+													"name": "CourseId",
+													"type": "Int32",
+													"physicalType": "int"
+												},
+												"sink": {
+													"name": "CourseId",
+													"type": "Int32"
+												}
+											},
+											{
+												"source": {
+													"name": "CourseName",
+													"type": "String",
+													"physicalType": "nvarchar"
+												},
+												"sink": {
+													"name": "CourseName",
+													"type": "String"
+												}
+											},
+											{
+												"source": {
+													"name": "sysCreatedAt",
+													"type": "DateTime",
+													"physicalType": "datetime"
+												},
+												"sink": {
+													"name": "sysCreatedAt",
+													"type": "DateTime"
+												}
+											},
+											{
+												"source": {
+													"name": "sysChangedAt",
+													"type": "DateTime",
+													"physicalType": "datetime"
+												},
+												"sink": {
+													"name": "sysChangedAt",
+													"type": "DateTime"
+												}
+											},
+											{
+												"source": {
+													"name": "sysCreatedBy",
+													"type": "Int32",
+													"physicalType": "int"
+												},
+												"sink": {
+													"name": "sysCreatedBy",
+													"type": "Int32"
+												}
+											},
+											{
+												"source": {
+													"name": "sysChangedBy",
+													"type": "Int32",
+													"physicalType": "int"
+												},
+												"sink": {
+													"name": "sysChangedBy",
+													"type": "Int32"
+												}
+											}
+										],
+										"typeConversion": true,
+										"typeConversionSettings": {
+											"allowDataTruncation": true,
+											"treatBooleanAsNumber": false
+										}
+									}
+								}
+							},
+							{
+								"source": {
+									"table": "SubTask"
+								},
+								"destination": {
+									"table": "SubTask"
+								},
+								"copyActivity": {
+									"translator": {
+										"type": "TabularTranslator",
+										"mappings": [
+											{
+												"source": {
+													"name": "SubTaskId",
+													"type": "Int32",
+													"physicalType": "int"
+												},
+												"sink": {
+													"name": "SubTaskId",
+													"type": "Int32"
+												}
+											},
+											{
+												"source": {
+													"name": "TaskId",
+													"type": "Int32",
+													"physicalType": "int"
+												},
+												"sink": {
+													"name": "TaskId",
+													"type": "Int32"
+												}
+											},
+											{
+												"source": {
+													"name": "SubTaskName",
+													"type": "String",
+													"physicalType": "nvarchar"
+												},
+												"sink": {
+													"name": "SubTaskName",
+													"type": "String"
+												}
+											},
+											{
+												"source": {
+													"name": "Description",
+													"type": "String",
+													"physicalType": "nvarchar"
+												},
+												"sink": {
+													"name": "Description",
+													"type": "String"
+												}
+											},
+											{
+												"source": {
+													"name": "Topic",
+													"type": "String",
+													"physicalType": "nvarchar"
+												},
+												"sink": {
+													"name": "Topic",
+													"type": "String"
+												}
+											},
+											{
+												"source": {
+													"name": "sysCreatedAt",
+													"type": "DateTime",
+													"physicalType": "datetime"
+												},
+												"sink": {
+													"name": "sysCreatedAt",
+													"type": "DateTime"
+												}
+											},
+											{
+												"source": {
+													"name": "sysChangedAt",
+													"type": "DateTime",
+													"physicalType": "datetime"
+												},
+												"sink": {
+													"name": "sysChangedAt",
+													"type": "DateTime"
+												}
+											},
+											{
+												"source": {
+													"name": "sysCreatedBy",
+													"type": "Int32",
+													"physicalType": "int"
+												},
+												"sink": {
+													"name": "sysCreatedBy",
+													"type": "Int32"
+												}
+											},
+											{
+												"source": {
+													"name": "sysChangedBy",
+													"type": "Int32",
+													"physicalType": "int"
+												},
+												"sink": {
+													"name": "sysChangedBy",
+													"type": "Int32"
+												}
+											}
+										],
+										"typeConversion": true,
+										"typeConversionSettings": {
+											"allowDataTruncation": true,
+											"treatBooleanAsNumber": false
+										}
+									}
+								}
+							},
+							{
+								"source": {
+									"table": "SubTaskLog"
+								},
+								"destination": {
+									"table": "SubTaskLog"
+								},
+								"copyActivity": {
+									"translator": {
+										"type": "TabularTranslator",
+										"mappings": [
+											{
+												"source": {
+													"name": "SubTaskLogId",
+													"type": "Int32",
+													"physicalType": "int"
+												},
+												"sink": {
+													"name": "SubTaskLogId",
+													"type": "Int32"
+												}
+											},
+											{
+												"source": {
+													"name": "SubTaskId",
+													"type": "Int32",
+													"physicalType": "int"
+												},
+												"sink": {
+													"name": "SubTaskId",
+													"type": "Int32"
+												}
+											},
+											{
+												"source": {
+													"name": "StudentId",
+													"type": "Int32",
+													"physicalType": "int"
+												},
+												"sink": {
+													"name": "StudentId",
+													"type": "Int32"
+												}
+											},
+											{
+												"source": {
+													"name": "ReviewerId",
+													"type": "Int32",
+													"physicalType": "int"
+												},
+												"sink": {
+													"name": "ReviewerId",
+													"type": "Int32"
+												}
+											},
+											{
+												"source": {
+													"name": "Comment",
+													"type": "String",
+													"physicalType": "nvarchar"
+												},
+												"sink": {
+													"name": "Comment",
+													"type": "String"
+												}
+											},
+											{
+												"source": {
+													"name": "Score",
+													"type": "Decimal",
+													"physicalType": "decimal",
+													"scale": 2,
+													"precision": 8
+												},
+												"sink": {
+													"name": "Score",
+													"type": "Decimal"
+												}
+											},
+											{
+												"source": {
+													"name": "OnTime",
+													"type": "Decimal",
+													"physicalType": "decimal",
+													"scale": 2,
+													"precision": 8
+												},
+												"sink": {
+													"name": "OnTime",
+													"type": "Decimal"
+												}
+											},
+											{
+												"source": {
+													"name": "Accuracy",
+													"type": "Decimal",
+													"physicalType": "decimal",
+													"scale": 2,
+													"precision": 8
+												},
+												"sink": {
+													"name": "Accuracy",
+													"type": "Decimal"
+												}
+											},
+											{
+												"source": {
+													"name": "Extra",
+													"type": "Decimal",
+													"physicalType": "decimal",
+													"scale": 2,
+													"precision": 8
+												},
+												"sink": {
+													"name": "Extra",
+													"type": "Decimal"
+												}
+											},
+											{
+												"source": {
+													"name": "TotalScore",
+													"type": "Decimal",
+													"physicalType": "decimal",
+													"scale": 2,
+													"precision": 11
+												},
+												"sink": {
+													"name": "TotalScore",
+													"type": "Decimal"
+												}
+											},
+											{
+												"source": {
+													"name": "sysCreatedAt",
+													"type": "DateTime",
+													"physicalType": "datetime"
+												},
+												"sink": {
+													"name": "sysCreatedAt",
+													"type": "DateTime"
+												}
+											},
+											{
+												"source": {
+													"name": "sysChangedAt",
+													"type": "DateTime",
+													"physicalType": "datetime"
+												},
+												"sink": {
+													"name": "sysChangedAt",
+													"type": "DateTime"
+												}
+											},
+											{
+												"source": {
+													"name": "sysCreatedBy",
+													"type": "Int32",
+													"physicalType": "int"
+												},
+												"sink": {
+													"name": "sysCreatedBy",
+													"type": "Int32"
+												}
+											},
+											{
+												"source": {
+													"name": "sysChangedBy",
+													"type": "Int32",
+													"physicalType": "int"
+												},
+												"sink": {
+													"name": "sysChangedBy",
+													"type": "Int32"
+												}
+											}
+										],
+										"typeConversion": true,
+										"typeConversionSettings": {
+											"allowDataTruncation": true,
+											"treatBooleanAsNumber": false
+										}
+									}
+								}
+							},
+							{
+								"source": {
+									"table": "Task"
+								},
+								"destination": {
+									"table": "Task"
+								},
+								"copyActivity": {
+									"translator": {
+										"type": "TabularTranslator",
+										"mappings": [
+											{
+												"source": {
+													"name": "TaskId",
+													"type": "Int32",
+													"physicalType": "int"
+												},
+												"sink": {
+													"name": "TaskId",
+													"type": "Int32"
+												}
+											},
+											{
+												"source": {
+													"name": "Name",
+													"type": "String",
+													"physicalType": "nvarchar"
+												},
+												"sink": {
+													"name": "Name",
+													"type": "String"
+												}
+											},
+											{
+												"source": {
+													"name": "Description",
+													"type": "String",
+													"physicalType": "nvarchar"
+												},
+												"sink": {
+													"name": "Description",
+													"type": "String"
+												}
+											},
+											{
+												"source": {
+													"name": "Topic",
+													"type": "String",
+													"physicalType": "nvarchar"
+												},
+												"sink": {
+													"name": "Topic",
+													"type": "String"
+												}
+											},
+											{
+												"source": {
+													"name": "sysCreatedAt",
+													"type": "DateTime",
+													"physicalType": "datetime"
+												},
+												"sink": {
+													"name": "sysCreatedAt",
+													"type": "DateTime"
+												}
+											},
+											{
+												"source": {
+													"name": "sysChangedAt",
+													"type": "DateTime",
+													"physicalType": "datetime"
+												},
+												"sink": {
+													"name": "sysChangedAt",
+													"type": "DateTime"
+												}
+											},
+											{
+												"source": {
+													"name": "sysCreatedBy",
+													"type": "Int32",
+													"physicalType": "int"
+												},
+												"sink": {
+													"name": "sysCreatedBy",
+													"type": "Int32"
+												}
+											},
+											{
+												"source": {
+													"name": "sysChangedBy",
+													"type": "Int32",
+													"physicalType": "int"
+												},
+												"sink": {
+													"name": "sysChangedBy",
+													"type": "Int32"
+												}
+											},
+											{
+												"source": {
+													"name": "CourseId",
+													"type": "Int32",
+													"physicalType": "int"
+												},
+												"sink": {
+													"name": "CourseId",
+													"type": "Int32"
+												}
+											}
+										],
+										"typeConversion": true,
+										"typeConversionSettings": {
+											"allowDataTruncation": true,
+											"treatBooleanAsNumber": false
+										}
+									}
+								}
+							},
+							{
+								"source": {
+									"table": "TaskBackup"
+								},
+								"destination": {
+									"table": "TaskBackup"
+								},
+								"copyActivity": {
+									"translator": {
+										"type": "TabularTranslator",
+										"mappings": [
+											{
+												"source": {
+													"name": "TaskId",
+													"type": "Int32",
+													"physicalType": "int"
+												},
+												"sink": {
+													"name": "TaskId",
+													"type": "Int32"
+												}
+											},
+											{
+												"source": {
+													"name": "TaskName",
+													"type": "String",
+													"physicalType": "nvarchar"
+												},
+												"sink": {
+													"name": "TaskName",
+													"type": "String"
+												}
+											},
+											{
+												"source": {
+													"name": "TaskNumber",
+													"type": "String",
+													"physicalType": "nvarchar"
+												},
+												"sink": {
+													"name": "TaskNumber",
+													"type": "String"
+												}
+											},
+											{
+												"source": {
+													"name": "Description",
+													"type": "String",
+													"physicalType": "nvarchar"
+												},
+												"sink": {
+													"name": "Description",
+													"type": "String"
+												}
+											},
+											{
+												"source": {
+													"name": "Topic",
+													"type": "String",
+													"physicalType": "nvarchar"
+												},
+												"sink": {
+													"name": "Topic",
+													"type": "String"
+												}
+											},
+											{
+												"source": {
+													"name": "sysCreatedAt",
+													"type": "DateTime",
+													"physicalType": "datetime"
+												},
+												"sink": {
+													"name": "sysCreatedAt",
+													"type": "DateTime"
+												}
+											},
+											{
+												"source": {
+													"name": "sysChangedAt",
+													"type": "DateTime",
+													"physicalType": "datetime"
+												},
+												"sink": {
+													"name": "sysChangedAt",
+													"type": "DateTime"
+												}
+											},
+											{
+												"source": {
+													"name": "sysCreatedBy",
+													"type": "Int32",
+													"physicalType": "int"
+												},
+												"sink": {
+													"name": "sysCreatedBy",
+													"type": "Int32"
+												}
+											},
+											{
+												"source": {
+													"name": "sysChangedBy",
+													"type": "Int32",
+													"physicalType": "int"
+												},
+												"sink": {
+													"name": "sysChangedBy",
+													"type": "Int32"
+												}
+											},
+											{
+												"source": {
+													"name": "SubTaskNumber",
+													"type": "String",
+													"physicalType": "varchar"
+												},
+												"sink": {
+													"name": "SubTaskNumber",
+													"type": "String"
+												}
+											}
+										],
+										"typeConversion": true,
+										"typeConversionSettings": {
+											"allowDataTruncation": true,
+											"treatBooleanAsNumber": false
+										}
+									}
+								}
+							}
+						]
+					}
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/SourceDataset_41i')]",
+				"[concat(variables('factoryId'), '/datasets/DestinationDataset_41i')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/DestinationDataset_41i')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "unstatisticsqlsbadevlinkedservice",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"cw_table": {
+						"type": "String"
+					}
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [],
+				"typeProperties": {
+					"schema": "task",
+					"table": {
+						"value": "@dataset().cw_table",
+						"type": "Expression"
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/unstatisticsqlsbadevlinkedservice')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/SourceDataset_41i')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "msbiazurelinkedservice",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"cw_table": {
+						"type": "String"
+					}
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [],
+				"typeProperties": {
+					"schema": "task",
+					"table": {
+						"value": "@dataset().cw_table",
+						"type": "Expression"
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/msbiazurelinkedservice')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/msbiazurelinkedservice')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureSqlDatabase",
+				"typeProperties": {
+					"connectionString": "[parameters('msbiazurelinkedservice_connectionString')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/unstatisticsqlsbadevlinkedservice')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureSqlDatabase",
+				"typeProperties": {
+					"connectionString": "[parameters('unstatisticsqlsbadevlinkedservice_connectionString')]"
+				}
+			},
+			"dependsOn": []
+		}
+	]
+}
