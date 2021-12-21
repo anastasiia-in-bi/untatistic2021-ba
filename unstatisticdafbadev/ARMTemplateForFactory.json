@@ -3887,7 +3887,7 @@
 						"type": "SqlServerStoredProcedure",
 						"dependsOn": [
 							{
-								"activity": "unstatistic-extract-uncrimefile",
+								"activity": "unstatistic-master-extract-uncrimefile",
 								"dependencyConditions": [
 									"Succeeded"
 								]
@@ -3982,7 +3982,7 @@
 						}
 					},
 					{
-						"name": "unstatistic-extract-uncrimefile",
+						"name": "unstatistic-master-extract-uncrimefile",
 						"type": "ExecutePipeline",
 						"dependsOn": [
 							{
@@ -3995,11 +3995,28 @@
 						"userProperties": [],
 						"typeProperties": {
 							"pipeline": {
-								"referenceName": "unstatistic-extract-uncrimefile",
+								"referenceName": "unstatistic-master-extract-uncrimefile",
 								"type": "PipelineReference"
 							},
 							"waitOnCompletion": true,
 							"parameters": {}
+						}
+					},
+					{
+						"name": "Fail1",
+						"type": "Fail",
+						"dependsOn": [
+							{
+								"activity": "unstatistic-extract-countries",
+								"dependencyConditions": [
+									"Failed"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"message": "unstatistic-extract-countries pipeline failed",
+							"errorCode": "101"
 						}
 					}
 				],
@@ -4028,7 +4045,7 @@
 				"[concat(variables('factoryId'), '/linkedServices/unstatisticsqlsbadevlinkedservice')]",
 				"[concat(variables('factoryId'), '/pipelines/unstatistic-extract-countries')]",
 				"[concat(variables('factoryId'), '/pipelines/unstatistic-extract-population')]",
-				"[concat(variables('factoryId'), '/pipelines/unstatistic-extract-uncrimefile')]"
+				"[concat(variables('factoryId'), '/pipelines/unstatistic-master-extract-uncrimefile')]"
 			]
 		}
 	]
