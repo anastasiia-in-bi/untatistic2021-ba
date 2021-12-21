@@ -176,7 +176,14 @@
 			{
 				"name": "SP PipelineExecutionHistory_Update",
 				"type": "SqlServerStoredProcedure",
-				"dependsOn": [],
+				"dependsOn": [
+					{
+						"activity": "Update FileName",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
 				"policy": {
 					"timeout": "7.00:00:00",
 					"retry": 0,
@@ -221,16 +228,6 @@
 				"linkedServiceName": {
 					"referenceName": "unstatisticsqlsbadevlinkedservice",
 					"type": "LinkedServiceReference"
-				}
-			},
-			{
-				"name": "Set variable PipelineExecutionStatus",
-				"type": "SetVariable",
-				"dependsOn": [],
-				"userProperties": [],
-				"typeProperties": {
-					"variableName": "PipelineExecutionStatus",
-					"value": "failed"
 				}
 			},
 			{
