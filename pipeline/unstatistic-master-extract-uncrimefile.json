@@ -220,25 +220,16 @@
 				"userProperties": [],
 				"typeProperties": {
 					"dataset": {
-						"referenceName": "src_csv_uncrime_folder",
-						"type": "DatasetReference",
-						"parameters": {
-							"Container": {
-								"value": "@variables('container')",
-								"type": "Expression"
-							},
-							"Path": {
-								"value": "@variables('filepath')",
-								"type": "Expression"
-							}
-						}
+						"referenceName": "ds_src_csv_metadata",
+						"type": "DatasetReference"
 					},
 					"fieldList": [
 						"childItems"
 					],
 					"storeSettings": {
 						"type": "AzureBlobStorageReadSettings",
-						"recursive": true
+						"recursive": true,
+						"enablePartitionDiscovery": false
 					},
 					"formatSettings": {
 						"type": "DelimitedTextReadSettings"
