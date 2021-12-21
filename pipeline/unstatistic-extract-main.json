@@ -155,6 +155,23 @@
 					},
 					"waitOnCompletion": true
 				}
+			},
+			{
+				"name": "Fail1",
+				"type": "Fail",
+				"dependsOn": [
+					{
+						"activity": "unstatistic-extract-countries",
+						"dependencyConditions": [
+							"Failed"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"message": "unstatistic-extract-countries pipeline failed",
+					"errorCode": "101"
+				}
 			}
 		],
 		"variables": {
