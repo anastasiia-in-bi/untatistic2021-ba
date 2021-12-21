@@ -14,6 +14,10 @@
 		"unstatisticsqlsbadevlinkedservice_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'unstatisticsqlsbadevlinkedservice'"
+		},
+		"unstatisticstac_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'unstatisticstac'"
 		}
 	},
 	"variables": {
@@ -42,6 +46,19 @@
 				"type": "AzureSqlDatabase",
 				"typeProperties": {
 					"connectionString": "[parameters('unstatisticsqlsbadevlinkedservice_connectionString')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/unstatisticstac')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureBlobStorage",
+				"typeProperties": {
+					"connectionString": "[parameters('unstatisticstac_connectionString')]"
 				}
 			},
 			"dependsOn": []
@@ -102,6 +119,173 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/linkedServices/msbiazurelinkedservice')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/src_csv_countries')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "unstatisticstac",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"fileName": "ISOcountries.csv",
+						"folderPath": "CrimeStat.Source.Countries",
+						"container": "unstatistic-sourcefiles"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"name": "name",
+						"type": "String"
+					},
+					{
+						"name": "alpha-2",
+						"type": "String"
+					},
+					{
+						"name": "alpha-3",
+						"type": "String"
+					},
+					{
+						"name": "country-code",
+						"type": "String"
+					},
+					{
+						"name": "iso_3166-2",
+						"type": "String"
+					},
+					{
+						"name": "region",
+						"type": "String"
+					},
+					{
+						"name": "sub-region",
+						"type": "String"
+					},
+					{
+						"name": "intermediate-region",
+						"type": "String"
+					},
+					{
+						"name": "region-code",
+						"type": "String"
+					},
+					{
+						"name": "sub-region-code",
+						"type": "String"
+					},
+					{
+						"name": "intermediate-region-code",
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/unstatisticstac')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/dst_sql_countries')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "unstatisticsqlsbadevlinkedservice",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "SourceItemId",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "name",
+						"type": "nvarchar"
+					},
+					{
+						"name": "alpha-2",
+						"type": "nvarchar"
+					},
+					{
+						"name": "alpha-3",
+						"type": "nvarchar"
+					},
+					{
+						"name": "country-code",
+						"type": "nvarchar"
+					},
+					{
+						"name": "iso_3166-2",
+						"type": "nvarchar"
+					},
+					{
+						"name": "region",
+						"type": "nvarchar"
+					},
+					{
+						"name": "sub-region",
+						"type": "nvarchar"
+					},
+					{
+						"name": "intermediate-region",
+						"type": "nvarchar"
+					},
+					{
+						"name": "region-code",
+						"type": "nvarchar"
+					},
+					{
+						"name": "sub-region-code",
+						"type": "nvarchar"
+					},
+					{
+						"name": "intermediate-region-code",
+						"type": "nvarchar"
+					},
+					{
+						"name": "sysCreatedAt",
+						"type": "datetime",
+						"precision": 23,
+						"scale": 3
+					},
+					{
+						"name": "sysChangedAt",
+						"type": "datetime",
+						"precision": 23,
+						"scale": 3
+					},
+					{
+						"name": "sysChangedBy",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "sysCreatedBy",
+						"type": "int",
+						"precision": 10
+					}
+				],
+				"typeProperties": {
+					"schema": "staging",
+					"table": "countriesref_untyped"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/unstatisticsqlsbadevlinkedservice')]"
 			]
 		},
 		{
@@ -835,6 +1019,389 @@
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/SourceDataset_41i')]",
 				"[concat(variables('factoryId'), '/datasets/DestinationDataset_41i')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/unstatistic-extract-countries')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"description": "extract data from csv file to SQL database",
+				"activities": [
+					{
+						"name": "Copy countries to SQL",
+						"type": "Copy",
+						"dependsOn": [
+							{
+								"activity": "SP PipelineExecutionHistory_Create",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "DelimitedTextSource",
+								"storeSettings": {
+									"type": "AzureBlobStorageReadSettings",
+									"recursive": true,
+									"enablePartitionDiscovery": false
+								},
+								"formatSettings": {
+									"type": "DelimitedTextReadSettings"
+								}
+							},
+							"sink": {
+								"type": "AzureSqlSink",
+								"preCopyScript": "TRUNCATE TABLE [staging].[countriesref_untyped];",
+								"disableMetricsCollection": false
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"mappings": [
+									{
+										"source": {
+											"name": "name",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "name",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									},
+									{
+										"source": {
+											"name": "alpha-2",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "alpha-2",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									},
+									{
+										"source": {
+											"name": "alpha-3",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "alpha-3",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									},
+									{
+										"source": {
+											"name": "country-code",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "country-code",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									},
+									{
+										"source": {
+											"name": "iso_3166-2",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "iso_3166-2",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									},
+									{
+										"source": {
+											"name": "region",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "region",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									},
+									{
+										"source": {
+											"name": "sub-region",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "sub-region",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									},
+									{
+										"source": {
+											"name": "intermediate-region",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "intermediate-region",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									},
+									{
+										"source": {
+											"name": "region-code",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "region-code",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									},
+									{
+										"source": {
+											"name": "sub-region-code",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "sub-region-code",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									},
+									{
+										"source": {
+											"name": "intermediate-region-code",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "intermediate-region-code",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									}
+								],
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "src_csv_countries",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "dst_sql_countries",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					},
+					{
+						"name": "SP PipelineExecutionHistory_Create",
+						"type": "SqlServerStoredProcedure",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"storedProcedureName": "[[adf].[usp_PipelineExecutionHistory_Create]",
+							"storedProcedureParameters": {
+								"PipelineName": {
+									"value": {
+										"value": "@pipeline().Pipeline",
+										"type": "Expression"
+									},
+									"type": "String"
+								},
+								"PipelineRunId": {
+									"value": {
+										"value": "@pipeline().RunId",
+										"type": "Expression"
+									},
+									"type": "String"
+								}
+							}
+						},
+						"linkedServiceName": {
+							"referenceName": "unstatisticsqlsbadevlinkedservice",
+							"type": "LinkedServiceReference"
+						}
+					},
+					{
+						"name": "SP PipelineExecutionHistory_Update",
+						"type": "SqlServerStoredProcedure",
+						"dependsOn": [
+							{
+								"activity": "Copy countries to SQL",
+								"dependencyConditions": [
+									"Succeeded",
+									"Skipped"
+								]
+							},
+							{
+								"activity": "Set variable PipelineExecutionStatus",
+								"dependencyConditions": [
+									"Succeeded",
+									"Skipped"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"storedProcedureName": "[[adf].[usp_PipelineExecutionHistory_Update]",
+							"storedProcedureParameters": {
+								"Description": {
+									"value": {
+										"value": "@variables('PipelineExecutionDescription')",
+										"type": "Expression"
+									},
+									"type": "String"
+								},
+								"PipelineName": {
+									"value": {
+										"value": "@pipeline().Pipeline",
+										"type": "Expression"
+									},
+									"type": "String"
+								},
+								"PipelineRunId": {
+									"value": {
+										"value": "@pipeline().RunId",
+										"type": "Expression"
+									},
+									"type": "String"
+								},
+								"Status": {
+									"value": {
+										"value": "@variables('PipelineExecutionStatus')",
+										"type": "Expression"
+									},
+									"type": "String"
+								}
+							}
+						},
+						"linkedServiceName": {
+							"referenceName": "unstatisticsqlsbadevlinkedservice",
+							"type": "LinkedServiceReference"
+						}
+					},
+					{
+						"name": "Set variable PipelineExecutionStatus",
+						"type": "SetVariable",
+						"dependsOn": [
+							{
+								"activity": "Copy countries to SQL",
+								"dependencyConditions": [
+									"Failed"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"variableName": "PipelineExecutionStatus",
+							"value": "failed"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"variables": {
+					"PipelineExecutionDescription": {
+						"type": "String",
+						"defaultValue": "succeed"
+					},
+					"PipelineExecutionStatus": {
+						"type": "String",
+						"defaultValue": "succeed"
+					}
+				},
+				"folder": {
+					"name": "unstatistic"
+				},
+				"annotations": [
+					"extract"
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/src_csv_countries')]",
+				"[concat(variables('factoryId'), '/datasets/dst_sql_countries')]",
+				"[concat(variables('factoryId'), '/linkedServices/unstatisticsqlsbadevlinkedservice')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/first_trigger')]",
+			"type": "Microsoft.DataFactory/factories/triggers",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"runtimeState": "Started",
+				"pipelines": [
+					{
+						"pipelineReference": {
+							"referenceName": "first_pipeline",
+							"type": "PipelineReference"
+						},
+						"parameters": {}
+					}
+				],
+				"type": "ScheduleTrigger",
+				"typeProperties": {
+					"recurrence": {
+						"frequency": "Day",
+						"interval": 1,
+						"startTime": "2021-12-21T10:44:00Z",
+						"timeZone": "UTC",
+						"schedule": {
+							"hours": [
+								15
+							]
+						}
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/pipelines/first_pipeline')]"
 			]
 		}
 	]
