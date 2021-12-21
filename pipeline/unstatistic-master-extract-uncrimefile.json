@@ -1,0 +1,303 @@
+{
+	"name": "unstatistic-master-extract-uncrimefile",
+	"properties": {
+		"activities": [
+			{
+				"name": "SP Log Pipeline start",
+				"type": "SqlServerStoredProcedure",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"storedProcedureName": "[adf].[usp_PipelineExecutionHistory_Create]",
+					"storedProcedureParameters": {
+						"PipelineName": {
+							"value": {
+								"value": "@pipeline().Pipeline",
+								"type": "Expression"
+							},
+							"type": "String"
+						},
+						"PipelineRunId": {
+							"value": {
+								"value": "@pipeline().RunId",
+								"type": "Expression"
+							},
+							"type": "String"
+						}
+					}
+				},
+				"linkedServiceName": {
+					"referenceName": "unstatisticsqlsbadevlinkedservice",
+					"type": "LinkedServiceReference"
+				}
+			},
+			{
+				"name": "SP Log Pipeline End",
+				"type": "SqlServerStoredProcedure",
+				"dependsOn": [
+					{
+						"activity": "ForEach1",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"storedProcedureName": "[adf].[usp_PipelineExecutionHistory_Update]",
+					"storedProcedureParameters": {
+						"Description": {
+							"value": "desc1",
+							"type": "String"
+						},
+						"PipelineName": {
+							"value": {
+								"value": "@pipeline().Pipeline",
+								"type": "Expression"
+							},
+							"type": "String"
+						},
+						"PipelineRunId": {
+							"value": {
+								"value": "@pipeline().RunId",
+								"type": "Expression"
+							},
+							"type": "String"
+						},
+						"Status": {
+							"value": "",
+							"type": "String"
+						}
+					}
+				}
+			},
+			{
+				"name": "Get configuration",
+				"type": "Lookup",
+				"dependsOn": [
+					{
+						"activity": "SP Log Pipeline start",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "AzureSqlSource",
+						"sqlReaderStoredProcedureName": "[adf].[usp_Configuration_Get]",
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"dataset": {
+						"referenceName": "dst_sql_dummy",
+						"type": "DatasetReference"
+					}
+				}
+			},
+			{
+				"name": "Set container",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "Get configuration",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "container",
+					"value": {
+						"value": "@activity('Get configuration').output.firstrow.container",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "Set path",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "Get configuration",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "filepath",
+					"value": {
+						"value": "@activity('Get configuration').output.firstrow.UNCrimepath",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "Truncate  uncrime_untyped",
+				"type": "Lookup",
+				"dependsOn": [
+					{
+						"activity": "Set container",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					},
+					{
+						"activity": "Set path",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "AzureSqlSource",
+						"sqlReaderQuery": "TRUNCATE TABLE [staging].[uncrime_untyped];\nSELECT 1;",
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"dataset": {
+						"referenceName": "dst_sql_dummy",
+						"type": "DatasetReference"
+					}
+				}
+			},
+			{
+				"name": "Get Metadata1",
+				"type": "GetMetadata",
+				"dependsOn": [
+					{
+						"activity": "Truncate  uncrime_untyped",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"fieldList": [],
+					"storeSettings": {
+						"type": "AzureBlobStorageReadSettings",
+						"recursive": true
+					},
+					"formatSettings": {
+						"type": "DelimitedTextReadSettings"
+					}
+				}
+			},
+			{
+				"name": "ForEach1",
+				"type": "ForEach",
+				"dependsOn": [
+					{
+						"activity": "Get Metadata1",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@activity('Get Metadata1').output.childitems",
+						"type": "Expression"
+					},
+					"isSequential": false,
+					"activities": [
+						{
+							"name": "Set filename",
+							"type": "SetVariable",
+							"dependsOn": [],
+							"userProperties": [],
+							"typeProperties": {
+								"variableName": "filename",
+								"value": {
+									"value": "@{item().name}",
+									"type": "Expression"
+								}
+							}
+						},
+						{
+							"name": "unstatistic-extract-uncrimefile",
+							"type": "ExecutePipeline",
+							"dependsOn": [
+								{
+									"activity": "Set filename",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"userProperties": [],
+							"typeProperties": {
+								"waitOnCompletion": true,
+								"parameters": {
+									"filename": {
+										"value": "@{replace(variables('filename'),'.csv','')}",
+										"type": "Expression"
+									}
+								}
+							}
+						}
+					]
+				}
+			}
+		],
+		"variables": {
+			"container": {
+				"type": "String"
+			},
+			"filepath": {
+				"type": "String"
+			},
+			"filename": {
+				"type": "String"
+			}
+		},
+		"folder": {
+			"name": "unstatistic"
+		},
+		"annotations": []
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}
