@@ -1,0 +1,355 @@
+{
+	"name": "unstatistic-extract-countries",
+	"properties": {
+		"description": "extract data from csv file to SQL database",
+		"activities": [
+			{
+				"name": "Copy countries to SQL",
+				"type": "Copy",
+				"dependsOn": [
+					{
+						"activity": "SP PipelineExecutionHistory_Create",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "DelimitedTextSource",
+						"storeSettings": {
+							"type": "AzureBlobStorageReadSettings",
+							"recursive": true,
+							"enablePartitionDiscovery": false
+						},
+						"formatSettings": {
+							"type": "DelimitedTextReadSettings"
+						}
+					},
+					"sink": {
+						"type": "AzureSqlSink",
+						"preCopyScript": "TRUNCATE TABLE [staging].[countriesref_untyped];",
+						"disableMetricsCollection": false
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"mappings": [
+							{
+								"source": {
+									"name": "name",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "name",
+									"type": "String",
+									"physicalType": "nvarchar"
+								}
+							},
+							{
+								"source": {
+									"name": "alpha-2",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "alpha-2",
+									"type": "String",
+									"physicalType": "nvarchar"
+								}
+							},
+							{
+								"source": {
+									"name": "alpha-3",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "alpha-3",
+									"type": "String",
+									"physicalType": "nvarchar"
+								}
+							},
+							{
+								"source": {
+									"name": "country-code",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "country-code",
+									"type": "String",
+									"physicalType": "nvarchar"
+								}
+							},
+							{
+								"source": {
+									"name": "iso_3166-2",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "iso_3166-2",
+									"type": "String",
+									"physicalType": "nvarchar"
+								}
+							},
+							{
+								"source": {
+									"name": "region",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "region",
+									"type": "String",
+									"physicalType": "nvarchar"
+								}
+							},
+							{
+								"source": {
+									"name": "sub-region",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "sub-region",
+									"type": "String",
+									"physicalType": "nvarchar"
+								}
+							},
+							{
+								"source": {
+									"name": "intermediate-region",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "intermediate-region",
+									"type": "String",
+									"physicalType": "nvarchar"
+								}
+							},
+							{
+								"source": {
+									"name": "region-code",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "region-code",
+									"type": "String",
+									"physicalType": "nvarchar"
+								}
+							},
+							{
+								"source": {
+									"name": "sub-region-code",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "sub-region-code",
+									"type": "String",
+									"physicalType": "nvarchar"
+								}
+							},
+							{
+								"source": {
+									"name": "intermediate-region-code",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "intermediate-region-code",
+									"type": "String",
+									"physicalType": "nvarchar"
+								}
+							}
+						],
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "src_csv_countries",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "dst_sql_countries",
+						"type": "DatasetReference"
+					}
+				]
+			},
+			{
+				"name": "SP PipelineExecutionHistory_Create",
+				"type": "SqlServerStoredProcedure",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"storedProcedureName": "[adf].[usp_PipelineExecutionHistory_Create]",
+					"storedProcedureParameters": {
+						"PipelineName": {
+							"value": {
+								"value": "@pipeline().Pipeline",
+								"type": "Expression"
+							},
+							"type": "String"
+						},
+						"PipelineRunId": {
+							"value": {
+								"value": "@pipeline().RunId",
+								"type": "Expression"
+							},
+							"type": "String"
+						}
+					}
+				},
+				"linkedServiceName": {
+					"referenceName": "unstatisticsqlsbadevlinkedservice",
+					"type": "LinkedServiceReference"
+				}
+			},
+			{
+				"name": "SP PipelineExecutionHistory_Update",
+				"type": "SqlServerStoredProcedure",
+				"dependsOn": [
+					{
+						"activity": "Copy countries to SQL",
+						"dependencyConditions": [
+							"Succeeded",
+							"Skipped"
+						]
+					},
+					{
+						"activity": "Set variable PipelineExecutionStatus",
+						"dependencyConditions": [
+							"Succeeded",
+							"Skipped"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"storedProcedureName": "[adf].[usp_PipelineExecutionHistory_Update]",
+					"storedProcedureParameters": {
+						"Description": {
+							"value": {
+								"value": "@variables('PipelineExecutionDescription')",
+								"type": "Expression"
+							},
+							"type": "String"
+						},
+						"PipelineName": {
+							"value": {
+								"value": "@pipeline().Pipeline",
+								"type": "Expression"
+							},
+							"type": "String"
+						},
+						"PipelineRunId": {
+							"value": {
+								"value": "@pipeline().RunId",
+								"type": "Expression"
+							},
+							"type": "String"
+						},
+						"Status": {
+							"value": {
+								"value": "@variables('PipelineExecutionStatus')",
+								"type": "Expression"
+							},
+							"type": "String"
+						}
+					}
+				},
+				"linkedServiceName": {
+					"referenceName": "unstatisticsqlsbadevlinkedservice",
+					"type": "LinkedServiceReference"
+				}
+			},
+			{
+				"name": "Set variable PipelineExecutionDescriotion",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "Copy countries to SQL",
+						"dependencyConditions": [
+							"Failed"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "PipelineExecutionDescription",
+					"value": {
+						"value": "@activity('Copy countries to SQL').output",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "Set variable PipelineExecutionStatus",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "Set variable PipelineExecutionDescriotion",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "PipelineExecutionStatus",
+					"value": "failed"
+				}
+			}
+		],
+		"variables": {
+			"PipelineExecutionDescription": {
+				"type": "String",
+				"defaultValue": "succeed"
+			},
+			"PipelineExecutionStatus": {
+				"type": "String",
+				"defaultValue": "succeed"
+			}
+		},
+		"folder": {
+			"name": "unstatistic"
+		},
+		"annotations": [
+			"extract"
+		]
+	}
+}

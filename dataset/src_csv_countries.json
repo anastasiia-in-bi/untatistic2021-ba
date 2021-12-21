@@ -1,0 +1,69 @@
+{
+	"name": "src_csv_countries",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "unstatisticstac",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"fileName": "ISOcountries.csv",
+				"folderPath": "CrimeStat.Source.Countries",
+				"container": "unstatistic-sourcefiles"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "name",
+				"type": "String"
+			},
+			{
+				"name": "alpha-2",
+				"type": "String"
+			},
+			{
+				"name": "alpha-3",
+				"type": "String"
+			},
+			{
+				"name": "country-code",
+				"type": "String"
+			},
+			{
+				"name": "iso_3166-2",
+				"type": "String"
+			},
+			{
+				"name": "region",
+				"type": "String"
+			},
+			{
+				"name": "sub-region",
+				"type": "String"
+			},
+			{
+				"name": "intermediate-region",
+				"type": "String"
+			},
+			{
+				"name": "region-code",
+				"type": "String"
+			},
+			{
+				"name": "sub-region-code",
+				"type": "String"
+			},
+			{
+				"name": "intermediate-region-code",
+				"type": "String"
+			}
+		]
+	}
+}
