@@ -1,0 +1,47 @@
+{
+	"name": "src_csv_uncrime",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "unstatisticstac",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"Container": {
+				"type": "string",
+				"defaultValue": "unstatistic-sourcefiles"
+			},
+			"Path": {
+				"type": "string",
+				"defaultValue": "CrimeStat.Source.UNCrime"
+			},
+			"FileName": {
+				"type": "string",
+				"defaultValue": "burglary.csv"
+			}
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"fileName": {
+					"value": "@dataset().FileName",
+					"type": "Expression"
+				},
+				"folderPath": {
+					"value": "@dataset().Path",
+					"type": "Expression"
+				},
+				"container": {
+					"value": "@dataset().Container",
+					"type": "Expression"
+				}
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": []
+	}
+}

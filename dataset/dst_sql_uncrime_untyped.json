@@ -1,0 +1,68 @@
+{
+	"name": "dst_sql_uncrime_untyped",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "unstatisticsqlsbadevlinkedservice",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "FileName",
+				"type": "nvarchar"
+			},
+			{
+				"name": "SourceItemId",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "RegionName",
+				"type": "nvarchar"
+			},
+			{
+				"name": "SubRegionName",
+				"type": "nvarchar"
+			},
+			{
+				"name": "CountryName",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Year",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Count",
+				"type": "nvarchar"
+			},
+			{
+				"name": "sysCreatedAt",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "sysChangedAt",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "sysChangedBy",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "sysCreatedBy",
+				"type": "int",
+				"precision": 10
+			}
+		],
+		"typeProperties": {
+			"schema": "staging",
+			"table": "uncrime_untyped"
+		}
+	}
+}

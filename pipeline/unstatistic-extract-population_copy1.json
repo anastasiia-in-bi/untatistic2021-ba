@@ -1,10 +1,10 @@
 {
-	"name": "unstatistic-extract-countries",
+	"name": "unstatistic-extract-population_copy1",
 	"properties": {
 		"description": "extract data from csv file to SQL database",
 		"activities": [
 			{
-				"name": "Copy countries to SQL",
+				"name": "Copy uncrime",
 				"type": "Copy",
 				"dependsOn": [
 					{
@@ -36,7 +36,6 @@
 					},
 					"sink": {
 						"type": "AzureSqlSink",
-						"preCopyScript": "TRUNCATE TABLE [staging].[countriesref_untyped];",
 						"disableMetricsCollection": false
 					},
 					"enableStaging": false,
@@ -45,132 +44,60 @@
 						"mappings": [
 							{
 								"source": {
-									"name": "name",
+									"name": "Region",
 									"type": "String",
 									"physicalType": "String"
 								},
 								"sink": {
-									"name": "name",
+									"name": "RegionName",
 									"type": "String",
 									"physicalType": "nvarchar"
 								}
 							},
 							{
 								"source": {
-									"name": "alpha-2",
+									"name": "Sub Region",
 									"type": "String",
 									"physicalType": "String"
 								},
 								"sink": {
-									"name": "alpha-2",
+									"name": "SubRegionName",
 									"type": "String",
 									"physicalType": "nvarchar"
 								}
 							},
 							{
 								"source": {
-									"name": "alpha-3",
+									"name": "Country",
 									"type": "String",
 									"physicalType": "String"
 								},
 								"sink": {
-									"name": "alpha-3",
+									"name": "CountryName",
 									"type": "String",
 									"physicalType": "nvarchar"
 								}
 							},
 							{
 								"source": {
-									"name": "country-code",
+									"name": "Year",
 									"type": "String",
 									"physicalType": "String"
 								},
 								"sink": {
-									"name": "country-code",
+									"name": "Year",
 									"type": "String",
 									"physicalType": "nvarchar"
 								}
 							},
 							{
 								"source": {
-									"name": "iso_3166-2",
+									"name": "Count",
 									"type": "String",
 									"physicalType": "String"
 								},
 								"sink": {
-									"name": "iso_3166-2",
-									"type": "String",
-									"physicalType": "nvarchar"
-								}
-							},
-							{
-								"source": {
-									"name": "region",
-									"type": "String",
-									"physicalType": "String"
-								},
-								"sink": {
-									"name": "region",
-									"type": "String",
-									"physicalType": "nvarchar"
-								}
-							},
-							{
-								"source": {
-									"name": "sub-region",
-									"type": "String",
-									"physicalType": "String"
-								},
-								"sink": {
-									"name": "sub-region",
-									"type": "String",
-									"physicalType": "nvarchar"
-								}
-							},
-							{
-								"source": {
-									"name": "intermediate-region",
-									"type": "String",
-									"physicalType": "String"
-								},
-								"sink": {
-									"name": "intermediate-region",
-									"type": "String",
-									"physicalType": "nvarchar"
-								}
-							},
-							{
-								"source": {
-									"name": "region-code",
-									"type": "String",
-									"physicalType": "String"
-								},
-								"sink": {
-									"name": "region-code",
-									"type": "String",
-									"physicalType": "nvarchar"
-								}
-							},
-							{
-								"source": {
-									"name": "sub-region-code",
-									"type": "String",
-									"physicalType": "String"
-								},
-								"sink": {
-									"name": "sub-region-code",
-									"type": "String",
-									"physicalType": "nvarchar"
-								}
-							},
-							{
-								"source": {
-									"name": "intermediate-region-code",
-									"type": "String",
-									"physicalType": "String"
-								},
-								"sink": {
-									"name": "intermediate-region-code",
+									"name": "Count",
 									"type": "String",
 									"physicalType": "nvarchar"
 								}
@@ -185,13 +112,27 @@
 				},
 				"inputs": [
 					{
-						"referenceName": "src_csv_countries",
-						"type": "DatasetReference"
+						"referenceName": "src_csv_uncrime",
+						"type": "DatasetReference",
+						"parameters": {
+							"Container": {
+								"value": "@pipeline().parameters.Container",
+								"type": "Expression"
+							},
+							"Path": {
+								"value": "@pipeline().parameters.Path",
+								"type": "Expression"
+							},
+							"FileName": {
+								"value": "@pipeline().parameters.FileName",
+								"type": "Expression"
+							}
+						}
 					}
 				],
 				"outputs": [
 					{
-						"referenceName": "dst_sql_countries",
+						"referenceName": "dst_sql_uncrime_untyped",
 						"type": "DatasetReference"
 					}
 				]
@@ -235,22 +176,7 @@
 			{
 				"name": "SP PipelineExecutionHistory_Update",
 				"type": "SqlServerStoredProcedure",
-				"dependsOn": [
-					{
-						"activity": "Copy countries to SQL",
-						"dependencyConditions": [
-							"Succeeded",
-							"Skipped"
-						]
-					},
-					{
-						"activity": "Set variable PipelineExecutionStatus",
-						"dependencyConditions": [
-							"Succeeded",
-							"Skipped"
-						]
-					}
-				],
+				"dependsOn": [],
 				"policy": {
 					"timeout": "7.00:00:00",
 					"retry": 0,
@@ -300,14 +226,7 @@
 			{
 				"name": "Set variable PipelineExecutionStatus",
 				"type": "SetVariable",
-				"dependsOn": [
-					{
-						"activity": "Set variable PipelineExecutionDescription",
-						"dependencyConditions": [
-							"Succeeded"
-						]
-					}
-				],
+				"dependsOn": [],
 				"userProperties": [],
 				"typeProperties": {
 					"variableName": "PipelineExecutionStatus",
@@ -315,26 +234,55 @@
 				}
 			},
 			{
-				"name": "Set variable PipelineExecutionDescription",
-				"type": "SetVariable",
+				"name": "Update FileName",
+				"type": "Lookup",
 				"dependsOn": [
 					{
-						"activity": "Copy countries to SQL",
+						"activity": "Copy uncrime",
 						"dependencyConditions": [
-							"Failed"
+							"Succeeded"
 						]
 					}
 				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
 				"userProperties": [],
 				"typeProperties": {
-					"variableName": "PipelineExecutionDescription",
-					"value": {
-						"value": "@{activity('Copy countries to SQL').Error.Message}",
-						"type": "Expression"
+					"source": {
+						"type": "AzureSqlSource",
+						"sqlReaderQuery": {
+							"value": "@replace('UPDATE [staging].[uncrime_untyped]\n  SET [FileName] = ''variablefilename''\n  WHERE [FileName] IS NULL\nSELECT 1;'\n, 'variablefilename'\n,pipeline().parameters.FileName\n)",
+							"type": "Expression"
+						},
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"dataset": {
+						"referenceName": "dst_sql_dummy",
+						"type": "DatasetReference"
 					}
 				}
 			}
 		],
+		"parameters": {
+			"Container": {
+				"type": "string",
+				"defaultValue": "unstatistic-sourcefiles"
+			},
+			"Path": {
+				"type": "string",
+				"defaultValue": "CrimeStat.Source.UNCrime"
+			},
+			"FileName": {
+				"type": "string",
+				"defaultValue": "burglary.csv"
+			}
+		},
 		"variables": {
 			"PipelineExecutionDescription": {
 				"type": "String",
