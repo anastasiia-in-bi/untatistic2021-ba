@@ -36,7 +36,7 @@
 					},
 					"sink": {
 						"type": "AzureSqlSink",
-						"preCopyScript": "TRUNCATE TABLE [staging].[countriesref_untyped];",
+						"preCopyScript": "TRUNCATE TABLE [staging].[population_untyped];",
 						"disableMetricsCollection": false
 					},
 					"enableStaging": false,
@@ -45,132 +45,744 @@
 						"mappings": [
 							{
 								"source": {
-									"name": "name",
+									"name": "Country Name",
 									"type": "String",
 									"physicalType": "String"
 								},
 								"sink": {
-									"name": "name",
+									"name": "CountryName",
 									"type": "String",
 									"physicalType": "nvarchar"
 								}
 							},
 							{
 								"source": {
-									"name": "alpha-2",
+									"name": "Country Code",
 									"type": "String",
 									"physicalType": "String"
 								},
 								"sink": {
-									"name": "alpha-2",
+									"name": "CountryCode",
 									"type": "String",
 									"physicalType": "nvarchar"
 								}
 							},
 							{
 								"source": {
-									"name": "alpha-3",
+									"name": "Indicator Name",
 									"type": "String",
 									"physicalType": "String"
 								},
 								"sink": {
-									"name": "alpha-3",
+									"name": "IndicatorName",
 									"type": "String",
 									"physicalType": "nvarchar"
 								}
 							},
 							{
 								"source": {
-									"name": "country-code",
+									"name": "Indicator Code",
 									"type": "String",
 									"physicalType": "String"
 								},
 								"sink": {
-									"name": "country-code",
+									"name": "IndicatorCode",
 									"type": "String",
 									"physicalType": "nvarchar"
 								}
 							},
 							{
 								"source": {
-									"name": "iso_3166-2",
+									"name": "1960",
 									"type": "String",
 									"physicalType": "String"
 								},
 								"sink": {
-									"name": "iso_3166-2",
+									"name": "1960",
 									"type": "String",
 									"physicalType": "nvarchar"
 								}
 							},
 							{
 								"source": {
-									"name": "region",
+									"name": "1961",
 									"type": "String",
 									"physicalType": "String"
 								},
 								"sink": {
-									"name": "region",
+									"name": "1961",
 									"type": "String",
 									"physicalType": "nvarchar"
 								}
 							},
 							{
 								"source": {
-									"name": "sub-region",
+									"name": "1962",
 									"type": "String",
 									"physicalType": "String"
 								},
 								"sink": {
-									"name": "sub-region",
+									"name": "1962",
 									"type": "String",
 									"physicalType": "nvarchar"
 								}
 							},
 							{
 								"source": {
-									"name": "intermediate-region",
+									"name": "1963",
 									"type": "String",
 									"physicalType": "String"
 								},
 								"sink": {
-									"name": "intermediate-region",
+									"name": "1963",
 									"type": "String",
 									"physicalType": "nvarchar"
 								}
 							},
 							{
 								"source": {
-									"name": "region-code",
+									"name": "1964",
 									"type": "String",
 									"physicalType": "String"
 								},
 								"sink": {
-									"name": "region-code",
+									"name": "1964",
 									"type": "String",
 									"physicalType": "nvarchar"
 								}
 							},
 							{
 								"source": {
-									"name": "sub-region-code",
+									"name": "1965",
 									"type": "String",
 									"physicalType": "String"
 								},
 								"sink": {
-									"name": "sub-region-code",
+									"name": "1965",
 									"type": "String",
 									"physicalType": "nvarchar"
 								}
 							},
 							{
 								"source": {
-									"name": "intermediate-region-code",
+									"name": "1966",
 									"type": "String",
 									"physicalType": "String"
 								},
 								"sink": {
-									"name": "intermediate-region-code",
+									"name": "1966",
+									"type": "String",
+									"physicalType": "nvarchar"
+								}
+							},
+							{
+								"source": {
+									"name": "1967",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "1967",
+									"type": "String",
+									"physicalType": "nvarchar"
+								}
+							},
+							{
+								"source": {
+									"name": "1968",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "1968",
+									"type": "String",
+									"physicalType": "nvarchar"
+								}
+							},
+							{
+								"source": {
+									"name": "1969",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "1969",
+									"type": "String",
+									"physicalType": "nvarchar"
+								}
+							},
+							{
+								"source": {
+									"name": "1970",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "1970",
+									"type": "String",
+									"physicalType": "nvarchar"
+								}
+							},
+							{
+								"source": {
+									"name": "1971",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "1971",
+									"type": "String",
+									"physicalType": "nvarchar"
+								}
+							},
+							{
+								"source": {
+									"name": "1972",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "1972",
+									"type": "String",
+									"physicalType": "nvarchar"
+								}
+							},
+							{
+								"source": {
+									"name": "1973",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "1973",
+									"type": "String",
+									"physicalType": "nvarchar"
+								}
+							},
+							{
+								"source": {
+									"name": "1974",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "1974",
+									"type": "String",
+									"physicalType": "nvarchar"
+								}
+							},
+							{
+								"source": {
+									"name": "1975",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "1975",
+									"type": "String",
+									"physicalType": "nvarchar"
+								}
+							},
+							{
+								"source": {
+									"name": "1976",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "1976",
+									"type": "String",
+									"physicalType": "nvarchar"
+								}
+							},
+							{
+								"source": {
+									"name": "1977",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "1977",
+									"type": "String",
+									"physicalType": "nvarchar"
+								}
+							},
+							{
+								"source": {
+									"name": "1978",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "1978",
+									"type": "String",
+									"physicalType": "nvarchar"
+								}
+							},
+							{
+								"source": {
+									"name": "1979",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "1979",
+									"type": "String",
+									"physicalType": "nvarchar"
+								}
+							},
+							{
+								"source": {
+									"name": "1980",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "1980",
+									"type": "String",
+									"physicalType": "nvarchar"
+								}
+							},
+							{
+								"source": {
+									"name": "1981",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "1981",
+									"type": "String",
+									"physicalType": "nvarchar"
+								}
+							},
+							{
+								"source": {
+									"name": "1982",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "1982",
+									"type": "String",
+									"physicalType": "nvarchar"
+								}
+							},
+							{
+								"source": {
+									"name": "1983",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "1983",
+									"type": "String",
+									"physicalType": "nvarchar"
+								}
+							},
+							{
+								"source": {
+									"name": "1984",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "1984",
+									"type": "String",
+									"physicalType": "nvarchar"
+								}
+							},
+							{
+								"source": {
+									"name": "1985",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "1985",
+									"type": "String",
+									"physicalType": "nvarchar"
+								}
+							},
+							{
+								"source": {
+									"name": "1986",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "1986",
+									"type": "String",
+									"physicalType": "nvarchar"
+								}
+							},
+							{
+								"source": {
+									"name": "1987",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "1987",
+									"type": "String",
+									"physicalType": "nvarchar"
+								}
+							},
+							{
+								"source": {
+									"name": "1988",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "1988",
+									"type": "String",
+									"physicalType": "nvarchar"
+								}
+							},
+							{
+								"source": {
+									"name": "1989",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "1989",
+									"type": "String",
+									"physicalType": "nvarchar"
+								}
+							},
+							{
+								"source": {
+									"name": "1990",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "1990",
+									"type": "String",
+									"physicalType": "nvarchar"
+								}
+							},
+							{
+								"source": {
+									"name": "1991",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "1991",
+									"type": "String",
+									"physicalType": "nvarchar"
+								}
+							},
+							{
+								"source": {
+									"name": "1992",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "1992",
+									"type": "String",
+									"physicalType": "nvarchar"
+								}
+							},
+							{
+								"source": {
+									"name": "1993",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "1993",
+									"type": "String",
+									"physicalType": "nvarchar"
+								}
+							},
+							{
+								"source": {
+									"name": "1994",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "1994",
+									"type": "String",
+									"physicalType": "nvarchar"
+								}
+							},
+							{
+								"source": {
+									"name": "1995",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "1995",
+									"type": "String",
+									"physicalType": "nvarchar"
+								}
+							},
+							{
+								"source": {
+									"name": "1996",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "1996",
+									"type": "String",
+									"physicalType": "nvarchar"
+								}
+							},
+							{
+								"source": {
+									"name": "1997",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "1997",
+									"type": "String",
+									"physicalType": "nvarchar"
+								}
+							},
+							{
+								"source": {
+									"name": "1998",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "1998",
+									"type": "String",
+									"physicalType": "nvarchar"
+								}
+							},
+							{
+								"source": {
+									"name": "1999",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "1999",
+									"type": "String",
+									"physicalType": "nvarchar"
+								}
+							},
+							{
+								"source": {
+									"name": "2000",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "2000",
+									"type": "String",
+									"physicalType": "nvarchar"
+								}
+							},
+							{
+								"source": {
+									"name": "2001",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "2001",
+									"type": "String",
+									"physicalType": "nvarchar"
+								}
+							},
+							{
+								"source": {
+									"name": "2002",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "2002",
+									"type": "String",
+									"physicalType": "nvarchar"
+								}
+							},
+							{
+								"source": {
+									"name": "2003",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "2003",
+									"type": "String",
+									"physicalType": "nvarchar"
+								}
+							},
+							{
+								"source": {
+									"name": "2004",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "2004",
+									"type": "String",
+									"physicalType": "nvarchar"
+								}
+							},
+							{
+								"source": {
+									"name": "2005",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "2005",
+									"type": "String",
+									"physicalType": "nvarchar"
+								}
+							},
+							{
+								"source": {
+									"name": "2006",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "2006",
+									"type": "String",
+									"physicalType": "nvarchar"
+								}
+							},
+							{
+								"source": {
+									"name": "2007",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "2007",
+									"type": "String",
+									"physicalType": "nvarchar"
+								}
+							},
+							{
+								"source": {
+									"name": "2008",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "2008",
+									"type": "String",
+									"physicalType": "nvarchar"
+								}
+							},
+							{
+								"source": {
+									"name": "2009",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "2009",
+									"type": "String",
+									"physicalType": "nvarchar"
+								}
+							},
+							{
+								"source": {
+									"name": "2010",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "2010",
+									"type": "String",
+									"physicalType": "nvarchar"
+								}
+							},
+							{
+								"source": {
+									"name": "2011",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "2011",
+									"type": "String",
+									"physicalType": "nvarchar"
+								}
+							},
+							{
+								"source": {
+									"name": "2012",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "2012",
+									"type": "String",
+									"physicalType": "nvarchar"
+								}
+							},
+							{
+								"source": {
+									"name": "2013",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "2013",
+									"type": "String",
+									"physicalType": "nvarchar"
+								}
+							},
+							{
+								"source": {
+									"name": "2014",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "2014",
+									"type": "String",
+									"physicalType": "nvarchar"
+								}
+							},
+							{
+								"source": {
+									"name": "2015",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "2015",
+									"type": "String",
+									"physicalType": "nvarchar"
+								}
+							},
+							{
+								"source": {
+									"name": "2016",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "2016",
+									"type": "String",
+									"physicalType": "nvarchar"
+								}
+							},
+							{
+								"source": {
+									"name": "2017",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "2017",
 									"type": "String",
 									"physicalType": "nvarchar"
 								}
