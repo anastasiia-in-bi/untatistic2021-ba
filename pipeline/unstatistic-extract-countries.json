@@ -298,33 +298,13 @@
 				}
 			},
 			{
-				"name": "Set variable PipelineExecutionDescriotion",
+				"name": "Set variable PipelineExecutionStatus",
 				"type": "SetVariable",
 				"dependsOn": [
 					{
 						"activity": "Copy countries to SQL",
 						"dependencyConditions": [
 							"Failed"
-						]
-					}
-				],
-				"userProperties": [],
-				"typeProperties": {
-					"variableName": "PipelineExecutionDescription",
-					"value": {
-						"value": "@activity('Copy countries to SQL').output",
-						"type": "Expression"
-					}
-				}
-			},
-			{
-				"name": "Set variable PipelineExecutionStatus",
-				"type": "SetVariable",
-				"dependsOn": [
-					{
-						"activity": "Set variable PipelineExecutionDescriotion",
-						"dependencyConditions": [
-							"Succeeded"
 						]
 					}
 				],
