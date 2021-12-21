@@ -2,7 +2,7 @@
 	"name": "dst_sql_countries",
 	"properties": {
 		"linkedServiceName": {
-			"referenceName": "unstatisticsqlsbadevlinkedservice",
+			"referenceName": "msbiazurelinkedservicekeyvault",
 			"type": "LinkedServiceReference"
 		},
 		"annotations": [],
@@ -81,8 +81,8 @@
 			}
 		],
 		"typeProperties": {
-			"schema": "staging",
-			"table": "countriesref_untyped"
+			"schema": "adf",
+			"table": "Configuration"
 		}
 	}
 }
