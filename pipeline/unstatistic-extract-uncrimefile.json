@@ -1,5 +1,5 @@
 {
-	"name": "unstatistic-extract-population_copy1",
+	"name": "unstatistic-extract-uncrimefile",
 	"properties": {
 		"description": "extract data from csv file to SQL database",
 		"activities": [
